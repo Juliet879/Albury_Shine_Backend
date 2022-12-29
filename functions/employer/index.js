@@ -3,6 +3,7 @@ import cors from "cors";
 import express from "express";
 import {db} from "../index.js";
 import createEmployer from "./routes/create.js";
+import login from "./routes/login.js";
 
 const employer = express().use(cors({origin: true}));
 employer.post("/", async (req, res) => {
@@ -18,6 +19,7 @@ employer.post("/", async (req, res) => {
 });
 
 employer.post("/createEmployer", createEmployer);
+employer.post("/loginEmployer", login);
 
 export default
 functions.region("europe-west3").https.onRequest(employer);

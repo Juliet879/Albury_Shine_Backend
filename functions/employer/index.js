@@ -2,6 +2,7 @@ import functions from "firebase-functions";
 import cors from "cors";
 import express from "express";
 import {db} from "../index.js";
+import createEmployer from "./routes/create.js";
 
 const employer = express().use(cors({origin: true}));
 employer.post("/", async (req, res) => {
@@ -15,6 +16,8 @@ employer.post("/", async (req, res) => {
     res.status(500).send({message: error.message});
   }
 });
+
+employer.post("/createEmployer", createEmployer);
 
 export default
 functions.region("europe-west3").https.onRequest(employer);

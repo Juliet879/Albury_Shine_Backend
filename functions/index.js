@@ -31,10 +31,14 @@ try {
   admin.app();
 }
 import employer from "./employer/index.js";
+import employee from "./employee/index.js";
 import {getFirestore} from "firebase-admin/firestore";
 export const db= getFirestore();
 
 export const employers=
 functions.region("europe-west3").https.onRequest(employer);
+
+export const employees =
+functions.region("europe-west3").https.onRequest(employee);
 
 

@@ -18,13 +18,20 @@ const login = async (req, res)=>{
     res.status(422)
         .send({error: "Missing email or password"});
   }
-  const userId = await getUserId(phoneNumber);
-  const checker = await checkIfEmployeeExists(userId);
-  if (checker !== true) {
-    res.status(404).send({message: "User does not exist"});
-  }
+
 
   try {
+    if (phoneNumber[0] === "0") {
+      res.status(400)
+          .send(
+              {message:
+                 "All phonenumbers must begin with a country code ie:254"});
+    }
+    const userId = await getUserId(phoneNumber);
+    const checker = await checkIfEmployeeExists(userId);
+    if (checker !== true) {
+      res.status(404).send({message: "User does not exist"});
+    }
     const employeeDetails = await getEmployeeDetails(userId);
     if (employeeDetails === null ||
       employeeDetails === undefined ||

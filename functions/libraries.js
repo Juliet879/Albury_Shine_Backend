@@ -44,21 +44,25 @@ export const getAdminDetails= async (email)=>{
   }
 };
 export const checkIfEmployeeExists = async (userId)=>{
-  const checkId = await
-  db.collection("employee-data").where("id", "==", userId)
-      .get();
-  let querySnapshot;
-  if (checkId.empty) {
-    return null;
-  } else {
-    checkId.forEach((item)=>{
-      querySnapshot= item.data();
-    });
-  }
-  if (querySnapshot!== undefined) {
-    return true;
-  } else {
-    return false;
+  try {
+    const checkId = await
+    db.collection("employee-data").where("id", "==", userId)
+        .get();
+    let querySnapshot;
+    if (checkId.empty) {
+      return null;
+    } else {
+      checkId.forEach((item)=>{
+        querySnapshot= item.data();
+      });
+    }
+    if (querySnapshot!== undefined) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    return error.message;
   }
 };
 
@@ -74,20 +78,20 @@ export const getEmployeeDetails= async (userId)=>{
       querySnapshot= item.data();
     });
   }
-  if (querySnapshot!== undefined) {
-    return querySnapshot;
-  } else {
-    return false;
-  }
+  return querySnapshot;
 };
 export const getUserId = (senderMSISDN) => {
-  return new Promise((resolve) => {
-    const senderId = crypto
-        .createHash("sha1")
-        .update(senderMSISDN)
-        .digest("hex");
-    resolve(senderId);
-  });
+  if (senderMSISDN[0]=== "0") {
+    return "All phonenumbers must begin with a country code ie:254 ";
+  } else {
+    return new Promise((resolve) => {
+      const senderId = crypto
+          .createHash("sha1")
+          .update(senderMSISDN)
+          .digest("hex");
+      resolve(senderId);
+    });
+  }
 };
 
 

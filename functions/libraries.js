@@ -94,8 +94,45 @@ export const getUserId = (senderMSISDN) => {
   }
 };
 
-
 export const accessToken = (user)=>{
   const SECRET_KEY = SECRET;
   return jwt.sign(user, SECRET_KEY, {expiresIn: "3000s"});
+};
+
+export const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  if (token == null) return res.sendStatus(401);
+
+  const SECRET_KEY = SECRET;
+
+  jwt.verify(token, SECRET_KEY, async (err, user) => {
+    if (err) return res.sendStatus(403);
+    let uid;
+    if (user.phoneNumber) {
+      const phoneNumber = user.phoneNumber.substring(1);
+      uid = await getUserId(phoneNumber);
+    } else {
+      uid = user.id;
+    }
+
+    user.userId = uid;
+    req.user = user;
+    next();
+  });
+};
+export const getAllEmployees= async ()=>{
+  const checkUsers = await
+  db.collection("employee-data")
+      .get();
+  const querySnapshot = [];
+  console.log(checkUsers);
+  if (checkUsers.empty) {
+    return "Unable to fetch employees from the database";
+  } else {
+    checkUsers.forEach((item)=>{
+      querySnapshot.push(item.data());
+    });
+  }
+  return querySnapshot;
 };

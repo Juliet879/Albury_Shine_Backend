@@ -26,7 +26,7 @@ const createEmployer = async (req, res)=>{
   try {
     const hashedPass = await bcrypt.hash(password, 10);
 
-    const userId = await db.collection("employer-data").doc().id;
+    const userId = db.collection("employer-data").doc().id;
     const employerData = {
       id: userId,
       firstName: firstName,
@@ -45,7 +45,11 @@ const createEmployer = async (req, res)=>{
       res.status(200).send({data: employerData});
     }
   } catch (error) {
-    res.status(500).send({message: error.message});
+    res.status(500).send({
+      status: 500,
+      success: false,
+      error: error.message,
+    });
   }
 };
 export default createEmployer;

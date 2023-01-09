@@ -46,7 +46,11 @@ const login = async (req, res)=>{
       res.status(401).send({message: "Wrong credentials"});
     }
   } catch (error) {
-    res.status(500).send({error: error.message});
+    res.status(500).send({
+      status: 500,
+      success: false,
+      error: error.message,
+    });
   }
 };
 

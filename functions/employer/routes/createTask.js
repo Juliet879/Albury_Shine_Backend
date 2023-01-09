@@ -41,7 +41,11 @@ const addTask = async (req, res) => {
       `Task successfully created and assigned to ${employee.firstName}`,
     });
   } catch (error) {
-    res.status(500).send({error: error.message});
+    res.status(500).send({
+      status: 500,
+      success: false,
+      error: error.message,
+    });
   }
 };
 export default addTask;

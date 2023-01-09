@@ -3,60 +3,64 @@ dotenv.config();
 import {db} from "./index.js";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
+import nodemailer from "nodemailer";
 
 const SECRET = process.env.JWT_KEY_KEY;
 
-export const checkIfUserExists = async (email)=>{
-  const checkEmail = await
-  db.collection("employer-data").where("email", "==", email)
+export const checkIfUserExists = async (email) => {
+  const checkEmail = await db
+      .collection("employer-data")
+      .where("email", "==", email)
       .get();
   let querySnapshot;
   if (checkEmail.empty) {
     return null;
   } else {
-    checkEmail.forEach((item)=>{
-      querySnapshot= item.data();
+    checkEmail.forEach((item) => {
+      querySnapshot = item.data();
     });
   }
-  if (querySnapshot!== undefined) {
+  if (querySnapshot !== undefined) {
     return true;
   } else {
     return false;
   }
 };
 
-export const getAdminDetails= async (email)=>{
-  const checkEmail = await
-  db.collection("employer-data").where("email", "==", email)
+export const getAdminDetails = async (email) => {
+  const checkEmail = await db
+      .collection("employer-data")
+      .where("email", "==", email)
       .get();
   let querySnapshot;
   if (checkEmail.empty) {
     return "Unable to fetch admin details from the database";
   } else {
-    checkEmail.forEach((item)=>{
-      querySnapshot= item.data();
+    checkEmail.forEach((item) => {
+      querySnapshot = item.data();
     });
   }
-  if (querySnapshot!== undefined) {
+  if (querySnapshot !== undefined) {
     return querySnapshot;
   } else {
     return false;
   }
 };
-export const checkIfEmployeeExists = async (userId)=>{
+export const checkIfEmployeeExists = async (userId) => {
   try {
-    const checkId = await
-    db.collection("employee-data").where("id", "==", userId)
+    const checkId = await db
+        .collection("employee-data")
+        .where("id", "==", userId)
         .get();
     let querySnapshot;
     if (checkId.empty) {
       return null;
     } else {
-      checkId.forEach((item)=>{
-        querySnapshot= item.data();
+      checkId.forEach((item) => {
+        querySnapshot = item.data();
       });
     }
-    if (querySnapshot!== undefined) {
+    if (querySnapshot !== undefined) {
       return true;
     } else {
       return false;
@@ -66,22 +70,23 @@ export const checkIfEmployeeExists = async (userId)=>{
   }
 };
 
-export const getEmployeeDetails= async (userId)=>{
-  const checkUser = await
-  db.collection("employee-data").where("id", "==", userId)
+export const getEmployeeDetails = async (userId) => {
+  const checkUser = await db
+      .collection("employee-data")
+      .where("id", "==", userId)
       .get();
   let querySnapshot;
   if (checkUser.empty) {
-    return "Unable to fetch employee details from the database";
+    return false;
   } else {
-    checkUser.forEach((item)=>{
-      querySnapshot= item.data();
+    checkUser.forEach((item) => {
+      querySnapshot = item.data();
     });
   }
   return querySnapshot;
 };
 export const getUserId = (senderMSISDN) => {
-  if (senderMSISDN[0]=== "0") {
+  if (senderMSISDN[0] === "0") {
     return "All phonenumbers must begin with a country code ie:254 ";
   } else {
     return new Promise((resolve) => {
@@ -94,7 +99,7 @@ export const getUserId = (senderMSISDN) => {
   }
 };
 
-export const accessToken = (user)=>{
+export const accessToken = (user) => {
   const SECRET_KEY = SECRET;
   return jwt.sign(user, SECRET_KEY, {expiresIn: "3000s"});
 };
@@ -121,18 +126,57 @@ export const authenticateToken = (req, res, next) => {
     next();
   });
 };
-export const getAllEmployees= async ()=>{
-  const checkUsers = await
-  db.collection("employee-data")
-      .get();
+export const getAllEmployees = async () => {
+  const checkUsers = await db.collection("employee-data").get();
   const querySnapshot = [];
   console.log(checkUsers);
   if (checkUsers.empty) {
-    return "Unable to fetch employees from the database";
+    return false;
   } else {
-    checkUsers.forEach((item)=>{
+    checkUsers.forEach((item) => {
       querySnapshot.push(item.data());
     });
   }
   return querySnapshot;
+};
+
+export const sendCredentialsEmail =
+ (receiver, subject, phoneNumber, password) => {
+   const transporter = nodemailer.createTransport({
+     service: "gmail",
+     auth: {
+       user: "alburyshine@gmail.com",
+       pass: "rowxrtlcroxlxmjt",
+     },
+   });
+
+   const mailOptions = {
+     from: "alburyshine@gmail.com",
+     to: receiver,
+     subject: subject,
+     html: `<h3>Welcome to AlburyShine!!
+    </h3><p>Please use the below credentials to login to the application.</p>
+     <p><bold>Phonenumber: ${phoneNumber}</bold></p>
+     <p><bold>Password: ${password}</bold></p>
+     <bold>NB: Ensure you change your password for your security</bold>`,
+   };
+
+   transporter.sendMail(mailOptions, function(error, info) {
+     if (error) {
+       return error;
+     } else {
+       return "Email sent successfully";
+     }
+   });
+ };
+
+export const employeeDelete = async (employeeId)=>{
+  const checkIfEmployeeExists = await getEmployeeDetails(employeeId);
+  if (!checkIfEmployeeExists) {
+    return false;
+  }
+  await db.collection("employee-data")
+      .doc(employeeId)
+      .delete();
+  return true;
 };

@@ -77,7 +77,7 @@ export const getEmployeeDetails = async (userId) => {
       .get();
   let querySnapshot;
   if (checkUser.empty) {
-    return "Unable to fetch employee details from the database";
+    return false;
   } else {
     checkUser.forEach((item) => {
       querySnapshot = item.data();
@@ -131,7 +131,7 @@ export const getAllEmployees = async () => {
   const querySnapshot = [];
   console.log(checkUsers);
   if (checkUsers.empty) {
-    return "Unable to fetch employees from the database";
+    return false;
   } else {
     checkUsers.forEach((item) => {
       querySnapshot.push(item.data());
@@ -169,3 +169,14 @@ export const sendCredentialsEmail =
      }
    });
  };
+
+export const employeeDelete = async (employeeId)=>{
+  const checkIfEmployeeExists = await getEmployeeDetails(employeeId);
+  if (!checkIfEmployeeExists) {
+    return false;
+  }
+  await db.collection("employee-data")
+      .doc(employeeId)
+      .delete();
+  return true;
+};

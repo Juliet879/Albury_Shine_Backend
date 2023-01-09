@@ -58,7 +58,11 @@ const createEmployee = async (req, res)=>{
       res.status(200).send({data: employeeData});
     }
   } catch (error) {
-    res.status(500).send({message: error.message});
+    res.status(500).send({
+      status: 500,
+      success: false,
+      error: error.message,
+    });
   }
 };
 export default createEmployee;

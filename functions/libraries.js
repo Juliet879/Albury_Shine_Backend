@@ -180,3 +180,8 @@ export const employeeDelete = async (employeeId)=>{
       .delete();
   return true;
 };
+export const updateEmployeeDetails = async (data, userId) =>{
+  await db.collection("employee-data").doc(userId)
+      .update(data);
+  return true;
+};

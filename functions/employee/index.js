@@ -4,10 +4,13 @@ import express from "express";
 import login from "./routes/loginEmployee.js";
 import updateEmployee from "./routes/updateProfile.js";
 import {authenticateToken} from "../libraries.js";
+import getTask from "./routes/getTask.js";
+
 
 const employee = express().use(cors({origin: true}));
 employee.post("/employee-login", login);
 employee.patch("/:userId/profile", authenticateToken, updateEmployee);
+employee.get("/task", authenticateToken, getTask);
 
 
 export default

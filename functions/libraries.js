@@ -235,3 +235,4 @@ export const getTaskDetails = async (taskId) => {
   }
   return querySnapshot;
 };
+

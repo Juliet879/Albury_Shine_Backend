@@ -16,11 +16,6 @@ const createEmployee = async (req, res)=>{
     });
   }
 
-  // if (password.length<6) {
-  //   res.status(400)
-  //       .send({message: "Password must be more than 6 characters"});
-  // }
-
 
   try {
     const permissionLevel = req.user.permissionLevel;

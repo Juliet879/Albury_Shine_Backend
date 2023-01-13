@@ -9,6 +9,7 @@ import {authenticateToken} from "../libraries.js";
 import addTask from "./routes/createTask.js";
 import createEmployee from "./routes/createEmployee.js";
 import deleteEmployee from "./routes/deleteEmployee.js";
+import updateAdmin from "./routes/updateProfile.js";
 
 const employer = express().use(cors({origin: true}));
 employer.post("/", async (req, res) => {
@@ -28,7 +29,8 @@ employer.post("/loginEmployer", login);
 employer.get("/all-employees", authenticateToken, allEmployees);
 employer.post("/add-task", authenticateToken, addTask);
 employer.post("/create-employee", authenticateToken, createEmployee);
-employer.post("/delete-employee", authenticateToken, deleteEmployee);
+employer.delete("/delete-employee", authenticateToken, deleteEmployee);
+employer.patch("/:userId/profile", authenticateToken, updateAdmin);
 
 export default
 functions.region("europe-west3").https.onRequest(employer);

@@ -7,44 +7,52 @@ import nodemailer from "nodemailer";
 
 const SECRET = process.env.JWT_KEY_KEY;
 
-export const checkIfUserExists = async (email) => {
+export const checkIfUserExists = async (userId) => {
   const checkEmail = await db
       .collection("employer-data")
-      .where("email", "==", email)
+      .where("id", "==", userId)
       .get();
   let querySnapshot;
   if (checkEmail.empty) {
-    return null;
+    return false;
   } else {
     checkEmail.forEach((item) => {
       querySnapshot = item.data();
     });
   }
-  if (querySnapshot !== undefined) {
-    return true;
-  } else {
-    return false;
-  }
+  return querySnapshot;
 };
 
-export const getAdminDetails = async (email) => {
+export const checkAdminEmail = async (email) => {
   const checkEmail = await db
       .collection("employer-data")
       .where("email", "==", email)
       .get();
   let querySnapshot;
   if (checkEmail.empty) {
-    return "Unable to fetch admin details from the database";
+    return false;
   } else {
     checkEmail.forEach((item) => {
       querySnapshot = item.data();
     });
   }
-  if (querySnapshot !== undefined) {
-    return querySnapshot;
-  } else {
+  return querySnapshot;
+};
+
+export const getAdminDetails = async (userId) => {
+  const checkEmail = await db
+      .collection("employer-data")
+      .where("id", "==", userId)
+      .get();
+  let querySnapshot;
+  if (checkEmail.empty) {
     return false;
+  } else {
+    checkEmail.forEach((item) => {
+      querySnapshot = item.data();
+    });
   }
+  return querySnapshot;
 };
 export const checkIfEmployeeExists = async (userId) => {
   try {
@@ -182,6 +190,12 @@ export const employeeDelete = async (employeeId)=>{
 };
 export const updateEmployeeDetails = async (data, userId) =>{
   await db.collection("employee-data").doc(userId)
+      .update(data);
+  return true;
+};
+
+export const updateEmployerDetails = async (data, userId) =>{
+  await db.collection("employer-data").doc(userId)
       .update(data);
   return true;
 };

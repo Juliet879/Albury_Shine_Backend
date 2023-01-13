@@ -1,4 +1,5 @@
 import {updateEmployerDetails, getAdminDetails} from "../../libraries.js";
+import {Timestamp} from "firebase-admin/firestore";
 
 const updateAdmin = async (req, res)=>{
   const {firstName, lastName, email, phoneNumber, password} = req.body;
@@ -26,6 +27,7 @@ const updateAdmin = async (req, res)=>{
         lastName: lastName? lastName : getCurrentDetails.lastName,
         password: password? password : getCurrentDetails.password,
         phoneNumber: phoneNumber? phoneNumber :getCurrentDetails.phoneNumber,
+        updatedAt: Timestamp.now(),
       };
       await updateEmployerDetails(userData, userId);
       res.status(200)

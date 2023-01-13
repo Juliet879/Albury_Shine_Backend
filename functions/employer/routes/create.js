@@ -2,6 +2,7 @@ import {validationResult} from "express-validator";
 import {db} from "../../index.js";
 import * as bcrypt from "bcrypt";
 import {checkIfUserExists, getUserId} from "../../libraries.js";
+import {Timestamp} from "firebase-admin/firestore";
 
 const createEmployer = async (req, res)=>{
   const {firstName, lastName, email, password, phoneNumber} = req.body;
@@ -29,6 +30,7 @@ const createEmployer = async (req, res)=>{
 
   try {
     const hashedPass = await bcrypt.hash(password, 10);
+    console.log(hashedPass);
 
     const userId = await getUserId(phoneNumber);
     const employerData = {
@@ -39,6 +41,8 @@ const createEmployer = async (req, res)=>{
       phoneNumber: phoneNumber,
       permissionLevel: "admin",
       password: hashedPass,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
     };
     const checkUser = await checkIfUserExists(userId);
 

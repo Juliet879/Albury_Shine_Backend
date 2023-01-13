@@ -199,3 +199,39 @@ export const updateEmployerDetails = async (data, userId) =>{
       .update(data);
   return true;
 };
+
+export const getAllTasks = async () => {
+  const checkTasks = await db.collection("tasks").get();
+  const querySnapshot = [];
+  console.log(checkTasks);
+  if (checkTasks.empty) {
+    return false;
+  } else {
+    checkTasks.forEach((item) => {
+      querySnapshot.push(item.data());
+    });
+  }
+  return querySnapshot;
+};
+
+export const updateTaskDetails = async (data, taskId) =>{
+  await db.collection("tasks").doc(taskId)
+      .update(data);
+  return true;
+};
+
+export const getTaskDetails = async (taskId) => {
+  const checkTask = await db
+      .collection("tasks")
+      .where("id", "==", taskId)
+      .get();
+  let querySnapshot;
+  if (checkTask.empty) {
+    return false;
+  } else {
+    checkTask.forEach((item) => {
+      querySnapshot = item.data();
+    });
+  }
+  return querySnapshot;
+};

@@ -4,7 +4,7 @@ import {getEmployeeDetails} from "../../libraries.js";
 import {Timestamp} from "firebase-admin/firestore";
 
 const addTask = async (req, res) => {
-  const {location, description, startTime, endTime, priority, assignee} =
+  const {location, description, startTime, endTime, priority, assigneeId} =
     req.body;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -19,12 +19,14 @@ const addTask = async (req, res) => {
       res.status(400).send({message: "User not authorized!"});
     }
     let employee;
-    if (Array.isArray(assignee)) {
-      employee = assignee.map(async (item)=> await getEmployeeDetails(item));
+    if (Array.isArray(assigneeId)) {
+      employee = assigneeId.map(async (item)=> await getEmployeeDetails(item));
     } else {
-      employee = await getEmployeeDetails(assignee);
+      employee = await getEmployeeDetails(assigneeId);
     }
+    const taskId = db.collection("tasks").doc().id;
     const data = {
+      id: taskId,
       location: location,
       description: description,
       startTime: startTime,
@@ -32,13 +34,15 @@ const addTask = async (req, res) => {
       priority: priority,
       assigneeId: employee.id,
       createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
 
     };
-    await db.collection("tasks").doc(employee.id)
+    await db.collection("tasks").doc(taskId)
         .set(data);
     res.status(200).send({
       status: 200,
       success: true,
+      taskId: taskId,
       message:
       `Task successfully created and assigned to ${employee.firstName}`,
     });

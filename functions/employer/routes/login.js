@@ -23,7 +23,6 @@ const login = async (req, res)=>{
   if (!adminDetails) {
     res.status(404).send({message: "User does not exist"});
   }
-
   try {
     if ( await bcrypt.compare(password, adminDetails.password)) {
       const token = accessToken(adminDetails);

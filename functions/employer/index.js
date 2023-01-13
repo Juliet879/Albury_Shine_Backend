@@ -10,6 +10,7 @@ import addTask from "./routes/createTask.js";
 import createEmployee from "./routes/createEmployee.js";
 import deleteEmployee from "./routes/deleteEmployee.js";
 import updateAdmin from "./routes/updateProfile.js";
+import updateTask from "./routes/updateTask.js";
 
 const employer = express().use(cors({origin: true}));
 employer.post("/", async (req, res) => {
@@ -31,6 +32,7 @@ employer.post("/add-task", authenticateToken, addTask);
 employer.post("/create-employee", authenticateToken, createEmployee);
 employer.delete("/delete-employee", authenticateToken, deleteEmployee);
 employer.patch("/:userId/profile", authenticateToken, updateAdmin);
+employer.patch("/:taskId/update", authenticateToken, updateTask);
 
 export default
 functions.region("europe-west3").https.onRequest(employer);

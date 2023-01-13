@@ -35,6 +35,7 @@ const addTask = async (req, res) => {
       assigneeId: employee.id,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
+      completed: false,
 
     };
     await db.collection("tasks").doc(taskId)

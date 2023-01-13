@@ -28,6 +28,7 @@ const getTask = async (req, res) =>{
         priority: task.priority,
         startTime: task.startTime,
         endTime: task.endTime,
+        completed: task.completed,
       };
       console.log(data);
       res.status(200)

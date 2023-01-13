@@ -1,10 +1,10 @@
 import {validationResult} from "express-validator";
 import {db} from "../../index.js";
 import * as bcrypt from "bcrypt";
-import {checkIfUserExists} from "../../libraries.js";
+import {checkIfUserExists, getUserId} from "../../libraries.js";
 
 const createEmployer = async (req, res)=>{
-  const {firstName, lastName, email, password} = req.body;
+  const {firstName, lastName, email, password, phoneNumber} = req.body;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     res.status(422).send({
@@ -12,11 +12,15 @@ const createEmployer = async (req, res)=>{
       errors,
     });
   }
-  if (!firstName && !lastName && !email && !password) {
+  if (!firstName && !lastName && !email && !password && !phoneNumber) {
     res.status(422)
-        .send({error: "Missing firstName or lastName or email or password"});
+        .send(
+            {error:
+              `Missing firstName 
+              or lastName or email or password or phoneNumber`,
+            },
+        );
   }
-
   if (password.length<6) {
     res.status(400)
         .send({message: "Password must be more than 6 characters"});
@@ -26,22 +30,23 @@ const createEmployer = async (req, res)=>{
   try {
     const hashedPass = await bcrypt.hash(password, 10);
 
-    const userId = db.collection("employer-data").doc().id;
+    const userId = await getUserId(phoneNumber);
     const employerData = {
       id: userId,
       firstName: firstName,
       lastName: lastName,
       email: email,
+      phoneNumber: phoneNumber,
       permissionLevel: "admin",
       password: hashedPass,
     };
-    const checkUser = await checkIfUserExists(email);
+    const checkUser = await checkIfUserExists(userId);
 
-    if (checkUser === true) {
+    if (checkUser) {
       res.status(400).send({message: "User exists"});
     } else {
       await db.collection("employer-data")
-          .doc().set(employerData);
+          .doc(userId).set(employerData);
       res.status(200).send({data: employerData});
     }
   } catch (error) {

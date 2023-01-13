@@ -1,9 +1,9 @@
 import {validationResult} from "express-validator";
 import * as bcrypt from "bcrypt";
 import {
-  checkIfUserExists,
-  getAdminDetails,
-  accessToken} from "../../libraries.js";
+  accessToken,
+  checkAdminEmail,
+} from "../../libraries.js";
 
 
 const login = async (req, res)=>{
@@ -19,18 +19,11 @@ const login = async (req, res)=>{
     res.status(422)
         .send({error: "Missing email or password"});
   }
-  const checker = await checkIfUserExists(email);
-  if (checker !== true) {
+  const adminDetails = await checkAdminEmail(email);
+  if (!adminDetails) {
     res.status(404).send({message: "User does not exist"});
   }
 
-  const adminDetails = await getAdminDetails(email);
-  if (adminDetails === null ||
-    adminDetails === undefined ||
-    adminDetails === " "
-  ) {
-    res.status(404).send({message: "Cannot find user"});
-  }
   try {
     if ( await bcrypt.compare(password, adminDetails.password)) {
       const token = accessToken(adminDetails);

@@ -1,6 +1,7 @@
 import {db} from "../../index.js";
 import {validationResult} from "express-validator";
 import {getEmployeeDetails} from "../../libraries.js";
+import {Timestamp} from "firebase-admin/firestore";
 
 const addTask = async (req, res) => {
   const {location, description, startTime, endTime, priority, assignee} =
@@ -30,6 +31,7 @@ const addTask = async (req, res) => {
       endTime: endTime,
       priority: priority,
       assigneeId: employee.id,
+      createdAt: Timestamp.now(),
 
     };
     await db.collection("tasks").doc(employee.id)

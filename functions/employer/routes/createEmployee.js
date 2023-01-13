@@ -4,6 +4,7 @@ import * as bcrypt from "bcrypt";
 import {checkIfEmployeeExists,
   getUserId,
   sendCredentialsEmail} from "../../libraries.js";
+import {Timestamp} from "firebase-admin/firestore";
 
 const createEmployee = async (req, res)=>{
   const {firstName, lastName, email, phoneNumber} = req.body;
@@ -43,6 +44,8 @@ const createEmployee = async (req, res)=>{
       email: email,
       permissionLevel: "employee",
       password: hashedPass,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
     };
     const checkUser = await checkIfEmployeeExists(phoneNumber);
 

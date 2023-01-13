@@ -203,7 +203,6 @@ export const updateEmployerDetails = async (data, userId) =>{
 export const getAllTasks = async () => {
   const checkTasks = await db.collection("tasks").get();
   const querySnapshot = [];
-  console.log(checkTasks);
   if (checkTasks.empty) {
     return false;
   } else {

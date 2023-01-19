@@ -235,3 +235,14 @@ export const getTaskDetails = async (taskId) => {
   return querySnapshot;
 };
 
+export const taskDelete = async (taskId)=>{
+  const checkIfTaskExists = await getTaskDetails(taskId);
+  if (!checkIfTaskExists) {
+    return false;
+  }
+  await db.collection("tasks")
+      .doc(taskId)
+      .delete();
+  return true;
+};
+

@@ -32,10 +32,10 @@ const addTask = async (req, res) => {
       startTime: startTime,
       endTime: endTime,
       priority: priority,
-      assigneeId: employee.id,
+      assigneeId: [employee.id],
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
-      completed: false,
+      status: "Not started",
 
     };
     await db.collection("tasks").doc(taskId)

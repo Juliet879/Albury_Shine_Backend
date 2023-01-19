@@ -1,13 +1,11 @@
-import {validationResult} from "express-validator";
 import {getEmployeeDetails} from "../../libraries.js";
 
 const getEmployee = async (req, res) =>{
-  const {userId} = req.body;
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
+  const {userId} = req.params;
+
+  if (!userId) {
     res.status(422).send({
-      error: "Issue with data sent, check errors for more information",
-      errors,
+      error: "No params found",
     });
   }
   try {

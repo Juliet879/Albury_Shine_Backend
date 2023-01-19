@@ -1,6 +1,6 @@
-import {getEmployeeDetails} from "../../libraries.js";
+import {getAdminDetails} from "../../libraries.js";
 
-const getEmployee = async (req, res) =>{
+const getEmployer = async (req, res) =>{
   const {userId} = req.params;
   if (!userId) {
     res.status(422).send({
@@ -8,7 +8,7 @@ const getEmployee = async (req, res) =>{
     });
   }
   try {
-    const user = await getEmployeeDetails(userId);
+    const user = await getAdminDetails(userId);
     if (!user) {
       res.status(400)
           .send({
@@ -41,4 +41,4 @@ const getEmployee = async (req, res) =>{
     });
   }
 };
-export default getEmployee;
+export default getEmployer;

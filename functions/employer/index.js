@@ -14,6 +14,7 @@ import updateTask from "./routes/updateTask.js";
 import getTask from "./routes/getTask.js";
 import getEmployee from "./routes/getEmployee.js";
 import allTasks from "./routes/getAllTasks.js";
+import getEmployer from "./routes/getAdminDetails.js";
 
 const employer = express().use(cors({origin: true}));
 employer.post("/", async (req, res) => {
@@ -34,12 +35,13 @@ employer.get("/all-employees", authenticateToken, allEmployees);
 employer.post("/add-task", authenticateToken, addTask);
 employer.post("/create-employee", authenticateToken, createEmployee);
 employer.delete("/delete-employee", authenticateToken, deleteEmployee);
-employer.patch("/:userId/profile", authenticateToken, updateAdmin);
-employer.patch("/:taskId/update", authenticateToken, updateTask);
+employer.patch("/profile/:userId", authenticateToken, updateAdmin);
+employer.patch("/update//:taskId", authenticateToken, updateTask);
 employer.get("/task", authenticateToken, getTask);
 employer.get("/all-tasks", authenticateToken, allTasks);
-employer.get("/get-employee", authenticateToken, getEmployee);
+employer.get("/get-employee/:userId", authenticateToken, getEmployee);
+employer.get("/get-admin/:userId", authenticateToken, getEmployer);
 
 export default
 functions.region("europe-west3").https.onRequest(employer);
-// export default employerExport;
+

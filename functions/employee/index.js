@@ -11,10 +11,10 @@ import allTasks from "./routes/getAllTasks.js";
 
 const employee = express().use(cors({origin: true}));
 employee.post("/employee-login", login);
-employee.patch("/:userId/profile", authenticateToken, updateEmployee);
+employee.patch("/profile/:userId", authenticateToken, updateEmployee);
 employee.get("/task", authenticateToken, getTask);
 employee.get("/all-tasks", authenticateToken, allTasks);
-employee.get("/get-employee", authenticateToken, getEmployee);
+employee.get("/get-employee/:userId", authenticateToken, getEmployee);
 
 
 export default

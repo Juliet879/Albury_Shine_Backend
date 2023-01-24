@@ -1,5 +1,6 @@
 import {validationResult} from "express-validator";
 import {db} from "../../index.js";
+import {FieldValue} from "firebase-admin/firestore";
 
 
 const startTask = async (req, res)=>{
@@ -15,14 +16,39 @@ const startTask = async (req, res)=>{
     const data = {
       startTime: startTime,
       location: location,
-      taskId: taskId,
-      assigneeId: [assigneeId],
+      assigneeId: assigneeId,
       status: "In Progress",
       endTime: "",
     };
-    await db.collection("task-progress")
-        .doc(taskId)
-        .set(data);
+
+    const checkTaskProgress = await db.collection("task-progress")
+        .doc(taskId).get();
+    if (!checkTaskProgress.exists) {
+      await db.collection("task-progress")
+          .doc(taskId)
+          .set({
+            taskId: taskId,
+            data: [data],
+          });
+    } else {
+      const checkUser = checkTaskProgress.data().data;
+      const check = checkUser.filter((item)=>item.assigneeId === assigneeId);
+      if (check.length !== 0) {
+        res.status(409)
+            .send({
+              status: 409,
+              success: false,
+              error: "User cannot start the same task twice",
+            });
+      }
+      await db.collection("task-progress")
+          .doc(taskId)
+          .update({
+            data: FieldValue.arrayUnion(data),
+          });
+    }
+
+
     await db.collection("tasks").doc(taskId)
         .update({
           status: "In progress",

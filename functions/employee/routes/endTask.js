@@ -1,7 +1,5 @@
 import {validationResult} from "express-validator";
 import {db} from "../../index.js";
-import {FieldValue} from "firebase-admin/firestore";
-
 
 const endTask = async (req, res)=>{
   const {endTime, location, taskId, assigneeId} = req.body;

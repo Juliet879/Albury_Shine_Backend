@@ -177,6 +177,40 @@ export const sendCredentialsEmail =
      }
    });
  };
+export const sendTaskEmail =
+(receiver, subject, data) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "alburyshine@gmail.com",
+      pass: "rowxrtlcroxlxmjt",
+    },
+  });
+
+  const mailOptions = {
+    from: "alburyshine@gmail.com",
+    to: receiver,
+    subject: subject,
+    html: `
+    <p>Please find the below details on your assigned task.</p>
+    <p>Task Details:</p>
+    <p>Location: <b>${data.location}</b></p>
+    <p>Description: <b>${data.description}</b></p>
+    <p>Start Time: <b>${data.startTime}</b></p>
+    <p>End Time: <b>${data.endTime}</b></p>
+    <p>Priority: <b>${data.priority}</b></p>
+    <p>Regards,</p>
+    <p>Albury Shine Team</p>`,
+  };
+
+  transporter.sendMail(mailOptions, function(error, info) {
+    if (error) {
+      return error;
+    } else {
+      return "Email sent successfully";
+    }
+  });
+};
 
 export const employeeDelete = async (employeeId)=>{
   const checkIfEmployeeExists = await getEmployeeDetails(employeeId);
@@ -246,39 +280,17 @@ export const taskDelete = async (taskId)=>{
   return true;
 };
 
-export const sendTaskEmail =
- (receiver, subject, data) => {
-   const transporter = nodemailer.createTransport({
-     service: "gmail",
-     auth: {
-       user: "alburyshine@gmail.com",
-       pass: "rowxrtlcroxlxmjt",
-     },
-   });
-
-   const mailOptions = {
-     from: "alburyshine@gmail.com",
-     to: receiver,
-     subject: subject,
-     html: `
-     <p>Please find the below details on your assigned task.</p>
-     <p>Task Details:</p>
-     <p>Location: <b>${data.location}</b></p>
-     <p>Description: <b>${data.description}</b></p>
-     <p>Start Time: <b>${data.startTime}</b></p>
-     <p>End Time: <b>${data.endTime}</b></p>
-     <p>Priority: <b>${data.priority}</b></p>
-     <p>Regards,</p>
-     <p>Albury Shine Team</p>`,
-   };
-
-   transporter.sendMail(mailOptions, function(error, info) {
-     if (error) {
-       return error;
-     } else {
-       return "Email sent successfully";
-     }
-   });
- };
+export const getTaskProgress =async ()=>{
+  const checkTasks = await db.collection("task-progress").get();
+  const querySnapshot = [];
+  if (checkTasks.empty) {
+    return false;
+  } else {
+    checkTasks.forEach((item) => {
+      querySnapshot.push(item.data());
+    });
+  }
+  return querySnapshot;
+};
 
 

@@ -16,6 +16,7 @@ import getEmployee from "./routes/getEmployee.js";
 import allTasks from "./routes/getAllTasks.js";
 import getEmployer from "./routes/getAdminDetails.js";
 import deleteTask from "./routes/deleteTask.js";
+import timeSheet from "./routes/getTimesheet.js";
 
 const employer = express().use(cors({origin: true}));
 employer.post("/", async (req, res) => {
@@ -43,6 +44,7 @@ employer.get("/all-tasks", authenticateToken, allTasks);
 employer.get("/get-employee/:userId", authenticateToken, getEmployee);
 employer.get("/get-admin/:userId", authenticateToken, getEmployer);
 employer.delete("/delete-task", authenticateToken, deleteTask);
+employer.get("/timesheet", authenticateToken, timeSheet);
 
 export default
 functions.region("europe-west3").https.onRequest(employer);

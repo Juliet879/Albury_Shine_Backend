@@ -20,10 +20,14 @@ const addTask = async (req, res) => {
     }
     let employee;
     if (Array.isArray(assigneeId)) {
-      employee = assigneeId.map(async (item)=> await getEmployeeDetails(item));
+      for (let i=0; i<assigneeId.length; i++) {
+        employee = await getEmployeeDetails(assigneeId[i]);
+        console.log({employee});
+      }
     } else {
       employee = await getEmployeeDetails(assigneeId);
     }
+    // todo. Use for loops
     const taskId = db.collection("tasks").doc().id;
     const data = {
       id: taskId,
@@ -32,12 +36,13 @@ const addTask = async (req, res) => {
       startTime: startTime,
       endTime: endTime,
       priority: priority,
-      assigneeId: [employee.id],
+      assigneeId: assigneeId,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
       status: "Not started",
 
     };
+    console.log({data});
     await db.collection("tasks").doc(taskId)
         .set(data);
     res.status(200).send({
@@ -45,7 +50,7 @@ const addTask = async (req, res) => {
       success: true,
       taskId: taskId,
       message:
-      `Task successfully created and assigned to ${employee.firstName}`,
+      "Task successfully created",
     });
   } catch (error) {
     res.status(500).send({

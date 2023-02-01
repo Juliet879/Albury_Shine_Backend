@@ -7,7 +7,8 @@ import {authenticateToken} from "../libraries.js";
 import getTask from "./routes/getTask.js";
 import getEmployee from "./routes/getEmployee.js";
 import allTasks from "./routes/getAllTasks.js";
-import startTask from "./routes/srartTask.js";
+import startTask from "./routes/startTask.js";
+import endTask from "./routes/endTask.js";
 
 
 const employee = express().use(cors({origin: true}));
@@ -17,6 +18,7 @@ employee.get("/task", authenticateToken, getTask);
 employee.get("/all-tasks", authenticateToken, allTasks);
 employee.get("/get-employee/:userId", authenticateToken, getEmployee);
 employee.post("/start-task", authenticateToken, startTask);
+employee.post("/end-task", authenticateToken, endTask);
 
 
 export default

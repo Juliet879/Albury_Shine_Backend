@@ -4,32 +4,28 @@ import {getTaskDetails} from "../../libraries.js";
 const timeSheet = async (req, res)=>{
   try {
     const tasks = await getTaskProgress();
-    console.log(tasks);
+    const task =[];
+    tasks.map( (item) => {
+      item.data.map((details)=> {
+        details.taskId= item.taskId;
+        task.push(details);
+      });
+    });
 
-    const taskId = tasks.map( (item) => item.taskId);
+    const data = await Promise.all(task.map(async (item)=>{
+      const id= await getTaskDetails(item.taskId);
+      if (item.taskId === id.id) {
+        item.taskDesc = id.description;
+      }
+      return item;
+    }));
 
-    console.log(taskId);
-    const taskDetails = [];
-    for (let i =0; i< taskId.length; i++) {
-      taskDetails.push(await getTaskDetails(taskId[i]));
-    }
-    console.log(taskDetails);
-
-    // const taskData = tasks.map((item)=>{
-    // //   taskDetails.map((item) => {
-    // //     if (item.id === item.taskId) {
-
-    // //     }
-    //   });
-    //   item.data;
-    // });
-    // console.log(taskData);
 
     res.status(200)
         .send({
           status: 200,
           success: true,
-          message: tasks,
+          message: data,
         });
   } catch (error) {
     res.status(500).send({

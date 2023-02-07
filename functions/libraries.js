@@ -293,4 +293,13 @@ export const getTaskProgress =async ()=>{
   return querySnapshot;
 };
 
+export const getHourDiff =(time1, time2)=>{
+  const dt1 = new Date(time1);
+  console.log({dt1});
+  const dt2 = new Date(time2);
+  let diff = (dt2.getTime() - dt1.getTime()) / 1000;
+  diff /= (60*60);
+  return Math.abs(Math.round(diff));
+};
+
 

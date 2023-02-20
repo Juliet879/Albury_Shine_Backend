@@ -7,6 +7,10 @@ import {
 
 const timeSheet = async (req, res) => {
   try {
+    const permissionLevel = req.user.permissionLevel;
+    if (permissionLevel !== "admin") {
+      res.status(400).send({message: "User not authorized!"});
+    }
     const tasks = await getTaskProgress();
     const task = [];
     tasks.map((item) => {

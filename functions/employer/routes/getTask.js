@@ -11,6 +11,10 @@ const getTask = async (req, res) =>{
     });
   }
   try {
+    const permissionLevel = req.user.permissionLevel;
+    if (permissionLevel !== "admin") {
+      res.status(400).send({message: "User not authorized!"});
+    }
     const task = await getTaskDetails(taskId);
     if (!task) {
       res.status(400)

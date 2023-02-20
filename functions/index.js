@@ -32,6 +32,7 @@ try {
 }
 import employer from "./employer/index.js";
 import employee from "./employee/index.js";
+import loginUser from "./login/index.js";
 import {getFirestore} from "firebase-admin/firestore";
 export const db= getFirestore();
 
@@ -40,5 +41,8 @@ functions.region("europe-west3").https.onRequest(employer);
 
 export const employees =
 functions.region("europe-west3").https.onRequest(employee);
+
+export const auth =
+functions.region("europe-west3").https.onRequest(loginUser);
 
 

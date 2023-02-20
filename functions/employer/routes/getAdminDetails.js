@@ -8,6 +8,10 @@ const getEmployer = async (req, res) =>{
     });
   }
   try {
+    const permissionLevel = req.user.permissionLevel;
+    if (permissionLevel !== "admin") {
+      res.status(400).send({message: "User not authorized!"});
+    }
     const user = await getAdminDetails(userId);
     if (!user) {
       res.status(400)

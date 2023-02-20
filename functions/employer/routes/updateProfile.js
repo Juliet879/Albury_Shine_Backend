@@ -13,6 +13,10 @@ const updateAdmin = async (req, res)=>{
     });
   }
   try {
+    const permissionLevel = req.user.permissionLevel;
+    if (permissionLevel !== "admin") {
+      res.status(400).send({message: "User not authorized!"});
+    }
     const getCurrentDetails = await getAdminDetails(userId);
     if (!getCurrentDetails) {
       res.status(404).send({

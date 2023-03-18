@@ -44,7 +44,8 @@ const login = async (req, res)=>{
       }
       if ( await bcrypt.compare(password, employerDetails.password)) {
         const token = accessToken(employerDetails);
-        res.status(201).send({status: 201, token: token, role:"admin"});
+        res.status(201).send(
+            {status: 201, token: token, permissionLevel: "admin"});
       } else {
         res.status(401).send({message: "Wrong credentials"});
       }
@@ -58,7 +59,11 @@ const login = async (req, res)=>{
       }
       if ( await bcrypt.compare(password, employeeDetails.password)) {
         const token = accessToken(employeeDetails);
-        res.status(201).send({status: 201, token: token, role:"employee"});
+        res.status(201).send(
+            {status: 201,
+              token: token,
+              permissionLevel: "employee",
+              userId: employeeDetails.id});
       } else {
         res.status(401).send({message: "Wrong credentials"});
       }

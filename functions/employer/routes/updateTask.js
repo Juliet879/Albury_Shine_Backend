@@ -15,6 +15,8 @@ const updateTask = async (req, res) => {
       priority,
       assigneeId,
       status,
+      breakTime,
+      rate,
     } = req.body;
     const query = req.params.taskId;
     const tasks = await getTaskDetails(query);
@@ -31,6 +33,8 @@ const updateTask = async (req, res) => {
         startTime: startTime ? startTime : tasks.startTime,
         endTime: endTime ? endTime : tasks.endTime,
         priority: priority ? priority : tasks.priority,
+        rate: rate? rate : tasks.rate,
+        breakTime: breakTime? breakTime : tasks.breakTime,
         assigneeId: assigneeId ?
           tasks.assigneeId.push(assigneeId) :
           tasks.assigneeId,

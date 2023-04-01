@@ -1,18 +1,11 @@
 import {getEmployeeDetails, updateEmployeeDetails} from "../../libraries.js";
 
 const updateEmployee = async (req, res)=>{
-  const {password} = req.body;
+  const {firstName, lastName, email, phoneNumber} = req.body;
   const query = req.params.userId;
-  const userId = req.user.id;
-  if (userId !== query) {
-    res.status(400).send({
-      status: 400,
-      success: false,
-      message: "UserId does not match",
-    });
-  }
+
   try {
-    const getCurrentDetails = await getEmployeeDetails(userId);
+    const getCurrentDetails = await getEmployeeDetails(query);
     if (!getCurrentDetails) {
       res.status(404).send({
         status: 404,
@@ -21,13 +14,13 @@ const updateEmployee = async (req, res)=>{
       });
     } else {
       const userData = {
-        email: getCurrentDetails.email,
-        firstName: getCurrentDetails.firstName,
-        lastName: getCurrentDetails.lastName,
-        password: password? password : getCurrentDetails.password,
-        phoneNumber: getCurrentDetails.phoneNumber,
+        email: email? email : getCurrentDetails.email,
+        firstName: firstName? firstName : getCurrentDetails.firstName,
+        lastName: lastName? lastName : getCurrentDetails.lastName,
+        password: getCurrentDetails.password,
+        phoneNumber: phoneNumber? phoneNumber :getCurrentDetails.phoneNumber,
       };
-      await updateEmployeeDetails(userData, userId);
+      await updateEmployeeDetails(userData, query);
       res.status(200)
           .send({
             status: 200,

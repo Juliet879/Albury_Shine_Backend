@@ -4,8 +4,16 @@ import {getEmployeeDetails, sendTaskEmail} from "../../libraries.js";
 import {Timestamp} from "firebase-admin/firestore";
 
 const addTask = async (req, res) => {
-  const {location, description, startTime, endTime, priority, assigneeId} =
-    req.body;
+  const {
+    location,
+    description,
+    startTime,
+    endTime,
+    priority,
+    assigneeId,
+    rate,
+    breakTime,
+  } = req.body;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     res.status(422).send({
@@ -28,6 +36,8 @@ const addTask = async (req, res) => {
       endTime: endTime,
       priority: priority,
       assigneeId: assigneeId,
+      rate: rate,
+      breakTime: breakTime,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
       status: "Not started",

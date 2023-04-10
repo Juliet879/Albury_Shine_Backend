@@ -19,30 +19,33 @@ const getTask = async (req, res) =>{
             success: false,
             error: "Task not found",
           });
-    } else if (task.assigneeId !== req.user.id) {
-      res.status(404)
-          .send({
-            status: 404,
-            success: false,
-            error: "You are not assigned this task",
-          });
-    } else {
-      const data ={
-        assigneeId: task.assigneeId,
-        description: task.description,
-        taskId: taskId,
-        location: task.location,
-        priority: task.priority,
-        startTime: task.startTime,
-        endTime: task.endTime,
-        completed: task.completed,
-      };
-      res.status(200)
-          .send({
-            status: 200,
-            success: true,
-            data: data,
-          });
+    }
+    if (Array.isArray(task.assigneeId)) {
+      const isAssigned = task.assigneeId.some((item) => item === req.user.id);
+
+      if (!isAssigned) {
+        res.status(404).send({
+          status: 404,
+          success: false,
+          error: "You are not assigned this task",
+        });
+      } else {
+        const data = {
+          assigneeId: task.assigneeId,
+          description: task.description,
+          taskId: taskId,
+          location: task.location,
+          priority: task.priority,
+          startTime: task.startTime,
+          endTime: task.endTime,
+          completed: task.completed,
+        };
+        res.status(200).send({
+          status: 200,
+          success: true,
+          data: data,
+        });
+      }
     }
   } catch (error) {
     res.status(500).send({

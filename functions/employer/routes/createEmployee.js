@@ -31,6 +31,7 @@ const createEmployee = async (req, res)=>{
     const hashedPass = await bcrypt.hash(`${firstName}${lastName}`, 10);
 
     const userId = await getUserId(phoneNumber);
+    const defaultProfileImage = "https://example.com/default-profile-image.jpg";
     const employeeData = {
       id: userId,
       firstName: firstName,
@@ -39,6 +40,7 @@ const createEmployee = async (req, res)=>{
       email: email,
       permissionLevel: "employee",
       password: hashedPass,
+      profile_image: defaultProfileImage,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
     };

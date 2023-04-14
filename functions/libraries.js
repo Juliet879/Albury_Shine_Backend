@@ -1,9 +1,11 @@
+/* eslint-disable require-jsdoc */
 import dotenv from "dotenv";
 dotenv.config();
 import {db} from "./index.js";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
+
 
 const SECRET = process.env.JWT_KEY_KEY;
 
@@ -301,5 +303,19 @@ export const getHourDiff =(time1, time2)=>{
   diff /= (60*60);
   return Math.abs(Math.round(diff));
 };
+// export async function uploadDefaultProfileImage(uid) {
+//   const defaultImagePath = "functions/default_image.jpg";
+//   const storageRef = bucket
+//   const profileImageRef = storageRef.child(`profile_images/${uid}.png`);
+
+//   try {
+//     await profileImageRef.put(defaultImagePath);
+//     const imageURL = await profileImageRef.getDownloadURL();
+//     return imageURL;
+//   } catch (error) {
+//     console.error("Error uploading default profile image: ", error);
+//     return null;
+//   }
+// }
 
 

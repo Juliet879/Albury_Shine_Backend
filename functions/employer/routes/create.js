@@ -33,6 +33,7 @@ const createEmployer = async (req, res)=>{
     console.log(hashedPass);
 
     const userId = await getUserId(phoneNumber);
+    const defaultProfileImage = "https://example.com/default-profile-image.jpg";
     const employerData = {
       id: userId,
       firstName: firstName,
@@ -41,6 +42,7 @@ const createEmployer = async (req, res)=>{
       phoneNumber: phoneNumber,
       permissionLevel: "admin",
       password: hashedPass,
+      profile_image: defaultProfileImage,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
     };

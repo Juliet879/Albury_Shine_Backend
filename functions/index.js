@@ -24,6 +24,7 @@ try {
       {
         credential: admin.credential.cert(configurations),
         databaseURL: process.env.DATABASEURL,
+        storageBucket: `${process.env.BUCKET_NAME}.appspot.com`,
       },
   );
 } catch (error) {
@@ -34,7 +35,11 @@ import employer from "./employer/index.js";
 import employee from "./employee/index.js";
 import loginUser from "./login/index.js";
 import {getFirestore} from "firebase-admin/firestore";
+
+
 export const db= getFirestore();
+export const bucket = admin.storage().bucket();
+
 
 export const employers=
 functions.region("europe-west3").https.onRequest(employer);

@@ -45,7 +45,9 @@ const login = async (req, res)=>{
       if ( await bcrypt.compare(password, employerDetails.password)) {
         const token = accessToken(employerDetails);
         res.status(201).send(
-            {status: 201, token: token, permissionLevel: "admin"});
+            {status: 201,
+              token: token,
+              permissionLevel: "admin", userId: employerDetails.id});
       } else {
         res.status(401).send({message: "Wrong credentials"});
       }

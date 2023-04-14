@@ -1,7 +1,7 @@
 import cors from "cors";
 import functions from "firebase-functions";
 import express from "express";
-import getTokens from "./generateToken";
+import getTokens from "./generateToken.js";
 
 const tokens =express().use(cors({origin: true}));
 tokens.post("/tokens", getTokens);

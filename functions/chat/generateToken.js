@@ -16,16 +16,13 @@ const getTokens =async (req, res)=>{
     });
   }
   try {
-    const {userId, userName} = req.body;
+    const {userId} = req.body;
     if (!userId) {
       return res.status(400).json({error: "User ID is required"});
     }
-    const user = await chatClient.upsertUser({
-      id: userId,
-      name: userName,
-    });
+
     const token = chatClient.createToken(userId);
-    res.json({user, token});
+    res.json({userId, token});
   } catch (error) {
     res.status(500).json({error: "Internal server error"});
   }

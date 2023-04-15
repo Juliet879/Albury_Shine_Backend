@@ -47,7 +47,12 @@ const login = async (req, res)=>{
         res.status(201).send(
             {status: 201,
               token: token,
-              permissionLevel: "admin", userId: employerDetails.id});
+              permissionLevel: "admin",
+              userId: employerDetails.id,
+              firstName: employerDetails.firstName,
+              lastName: employerDetails.lastName,
+
+            });
       } else {
         res.status(401).send({message: "Wrong credentials"});
       }
@@ -65,7 +70,10 @@ const login = async (req, res)=>{
             {status: 201,
               token: token,
               permissionLevel: "employee",
-              userId: employeeDetails.id});
+              userId: employeeDetails.id,
+              firstName: employeeDetails.firstName,
+              lastName: employeeDetails.lastName,
+            });
       } else {
         res.status(401).send({message: "Wrong credentials"});
       }

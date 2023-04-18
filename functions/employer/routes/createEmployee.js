@@ -55,7 +55,10 @@ const createEmployee = async (req, res)=>{
       await db.collection("employee-data")
           .doc(userId).set(employeeData);
 
-      res.status(200).send({data: employeeData});
+      res.status(200).send({
+        status: 200,
+        success: true,
+        data: employeeData});
     }
   } catch (error) {
     res.status(500).send({

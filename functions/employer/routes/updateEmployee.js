@@ -29,7 +29,7 @@ const updateEmployee = async (req, res)=>{
           });
     }
   } catch (error) {
-    console.log(error);
+    console.log({error});
     res.status(500).send({
       status: 500,
       success: false,

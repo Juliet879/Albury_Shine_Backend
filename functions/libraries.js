@@ -227,6 +227,7 @@ export const employeeDelete = async (employeeId)=>{
 export const updateEmployeeDetails = async (data, userId) =>{
   await db.collection("employee-data").doc(userId)
       .update(data);
+
   return true;
 };
 

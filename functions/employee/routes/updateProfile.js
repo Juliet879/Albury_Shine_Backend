@@ -1,9 +1,11 @@
 import {getEmployeeDetails, updateEmployeeDetails} from "../../libraries.js";
+import * as bcrypt from "bcrypt";
 
 const updateEmployee = async (req, res)=>{
   const {password} = req.body;
   const query = req.params.userId;
   const userId = req.user.id;
+  const hashedPass = await bcrypt.hash(password, 10);
   if (userId !== query) {
     res.status(400).send({
       status: 400,
@@ -24,7 +26,7 @@ const updateEmployee = async (req, res)=>{
         email: getCurrentDetails.email,
         firstName: getCurrentDetails.firstName,
         lastName: getCurrentDetails.lastName,
-        password: password? password : getCurrentDetails.password,
+        password: hashedPass? hashedPass : getCurrentDetails.password,
         phoneNumber: getCurrentDetails.phoneNumber,
       };
       await updateEmployeeDetails(userData, userId);
@@ -36,7 +38,6 @@ const updateEmployee = async (req, res)=>{
           });
     }
   } catch (error) {
-    console.log(error);
     res.status(500).send({
       status: 500,
       success: false,

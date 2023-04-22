@@ -306,6 +306,37 @@ export const getHourDiff =(time1, time2)=>{
   return Math.abs(Math.round(diff));
 };
 
+export const sendInvoiceEmail =
+async (receiver, subject, result) => {
+  const elementId = "pdf";
+  // const invoice = await easyinvoice.render(elementId, result.pdf);
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "alburyshine@gmail.com",
+      pass: "rowxrtlcroxlxmjt",
+    },
+  });
+
+  const mailOptions = {
+    from: "alburyshine@gmail.com",
+    to: receiver,
+    subject: subject,
+    html: `
+    <p>Please find the below details on your invoice for the last two weeks.</p>
+<div>${result.pdf}</div>
+    <p>Regards,</p>
+    <p>Albury Shine Team</p>`,
+  };
+
+  transporter.sendMail(mailOptions, function(error, info) {
+    if (error) {
+      return error;
+    } else {
+      return "Email sent successfully";
+    }
+  });
+};
 export const getCompletedTasks = async (userId) =>{
   const twoWeeksAgo = new Date();
   twoWeeksAgo.setDate(twoWeeksAgo.getDate()-14);
@@ -386,6 +417,7 @@ export const generateInvoice = async (userId, tasks, details)=>{
     // console.log(response);
     return result;
   });
+  await sendInvoiceEmail(employee.email, "Albury Shine Invoice", response);
   return response;
 };
 // export async function uploadDefaultProfileImage(uid) {

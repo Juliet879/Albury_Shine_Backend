@@ -23,10 +23,10 @@ const createInvoice = async (req, res)=>{
     });
   }
   try {
-    const permissionLevel = req.user.permissionLevel;
-    if (permissionLevel !== "admin") {
-      res.status(400).send({message: "User not authorized!"});
-    }
+    // const permissionLevel = req.user.permissionLevel;
+    // if (permissionLevel !== "admin") {
+    //   res.status(400).send({message: "User not authorized!"});
+    // }
 
 
     const userLastInvoiceDates = new Map();

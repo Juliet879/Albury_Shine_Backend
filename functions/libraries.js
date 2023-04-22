@@ -308,7 +308,7 @@ export const getHourDiff =(time1, time2)=>{
 
 export const sendInvoiceEmail =
 async (receiver, subject, result) => {
-  const elementId = "pdf";
+  // const elementId = "pdf";
   // const invoice = await easyinvoice.render(elementId, result.pdf);
   const transporter = nodemailer.createTransport({
     service: "gmail",

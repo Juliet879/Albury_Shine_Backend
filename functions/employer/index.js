@@ -46,7 +46,7 @@ employer.get("/get-admin/:userId", authenticateToken, getEmployer);
 employer.delete("/delete-task", authenticateToken, deleteTask);
 employer.get("/timesheet", authenticateToken, timeSheet);
 employer.patch("/update-employee/:userId", authenticateToken, updateEmployee);
-employer.post("/generate-invoice", createInvoice);
+employer.post("/generate-invoice", authenticateToken, createInvoice);
 
 export default
 functions.region("europe-west3").https.onRequest(employer);

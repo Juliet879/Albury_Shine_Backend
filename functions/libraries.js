@@ -5,6 +5,7 @@ import {db} from "./index.js";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
+import easyinvoice from "easyinvoice";
 
 
 const SECRET = process.env.JWT_KEY_KEY;
@@ -303,6 +304,89 @@ export const getHourDiff =(time1, time2)=>{
   let diff = (dt2.getTime() - dt1.getTime()) / 1000;
   diff /= (60*60);
   return Math.abs(Math.round(diff));
+};
+
+export const getCompletedTasks = async (userId) =>{
+  const twoWeeksAgo = new Date();
+  twoWeeksAgo.setDate(twoWeeksAgo.getDate()-14);
+  try {
+    const taskSnapShot = await db.collection("tasks")
+        .where("assigneeId", "array-contains", userId)
+        // .where("endTime", ">", twoWeeksAgo)
+        .get();
+
+    const tasks = taskSnapShot.docs.map((doc)=>doc.data());
+    return tasks;
+  } catch (error) {
+    console.log({error});
+    return [];
+  }
+};
+
+export const generateInvoice = async (userId, tasks, details)=>{
+  const employee = await getEmployeeDetails(userId);
+  let invoiceNumber = 2023.0000;
+  const oneWeekLater = new Date();
+  oneWeekLater.setDate(oneWeekLater.getDate()+7);
+  // item.hours= getHourDiff(item.startTime, item.endTime): null;
+  const data = {
+
+    "images": {
+      // The logo on top of your invoice
+      "logo": "https://public.easyinvoice.cloud/img/logo_en_original.png",
+      // The invoice background
+      "background": "https://public.easyinvoice.cloud/img/watermark-draft.jpg",
+    },
+    // Your own data
+    "sender": {
+      "company": "Albury Shine",
+      "address": `${details.address}`,
+      // "zip": `${details.zip||""}`,
+      // "city": `${details.city || ""}`,
+      "country": `${details.country|| ""}`,
+      "bank": `${details.bank}`,
+      "bsb": `${details.bsb}`,
+      "accountNumber": `${details.accountNumber}`,
+      "abn": `${details.abn}`,
+    },
+    // Your recipient
+    "client": {
+      "company": "Albury Shine",
+      // "address": "Clientstreet 456",
+      // "zip": "4567 CD",
+      // "city": "Clientcity",
+      // "country": "Clientcountry",
+      "Employee Name": `${employee.firstName} ${employee.lastName}`,
+      "PhoneNumber": `${employee.phoneNumber}`,
+      "Email": `${employee.email}`,
+    },
+    "information": {
+      // Invoice number
+      "number": `${invoiceNumber+=1}`,
+      // Invoice data
+      "date": `${new Date()}`,
+      // Invoice due date
+      "due-date": `${oneWeekLater}`,
+    },
+    // The products you would like to see on your invoice
+    // Total values are being calculated automatically
+    "products": tasks,
+    // The message you would like to display on the bottom of your invoice
+    "bottom-notice": "Kindly pay your invoice within 15 days.",
+    // Settings to customize your invoice
+    "settings": {
+      "currency": "USD",
+    },
+  };
+
+  // Create your invoice! Easy!
+  const response = easyinvoice.createInvoice(data, function(result) {
+    // The response will contain a base64 encoded PDF file
+
+    // console.log(response);
+    return result;
+  });
+  return response;
 };
 // export async function uploadDefaultProfileImage(uid) {
 //   const defaultImagePath = "functions/default_image.jpg";

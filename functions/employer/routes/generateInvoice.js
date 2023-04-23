@@ -57,11 +57,12 @@ const createInvoice = async (req, res)=>{
     }
     const taskDetails = tasks.map((item)=>{
       const hours= getHourDiff(item.startTime, item.endTime);
+      const rate = item.rate?item.rate:20;
       return {
         "quantity": 1,
         "description": item.description,
         "tax-rate": 2,
-        "price": hours*item.rate,
+        "price": hours*rate,
       };
     });
     const details={
@@ -79,7 +80,7 @@ const createInvoice = async (req, res)=>{
         .doc(invoiceId).set({
           employeeId: userId,
           invoiceId: invoiceId,
-          products: response.calculations,
+          data: response.pdf,
         });
     res.status(200).send({
       status: 200,

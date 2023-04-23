@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
 import dotenv from "dotenv";
 dotenv.config();
@@ -337,16 +338,41 @@ async (receiver, subject, result) => {
     }
   });
 };
+
+export const formatDateWithLocalTimezone= (date)=> {
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  const day = days[date.getDay()];
+  const month = months[date.getMonth()];
+  const dateOfMonth = date.getDate();
+  const year = date.getFullYear();
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  const seconds = date.getSeconds().toString().padStart(2, "0");
+  const timezoneOffset = -date.getTimezoneOffset();
+  const offsetSign = timezoneOffset >= 0 ? "+" : "-";
+  const offsetHours = Math.abs(timezoneOffset / 60).toString().padStart(2, "0");
+  const offsetMinutes = Math.abs(timezoneOffset % 60).toString().padStart(2, "0");
+
+  return `${day} ${month} ${dateOfMonth} ${year} ${hours}:${minutes}:${seconds} GMT${offsetSign}${offsetHours}${offsetMinutes}`;
+};
+
+
 export const getCompletedTasks = async (userId) =>{
   const twoWeeksAgo = new Date();
   twoWeeksAgo.setDate(twoWeeksAgo.getDate()-14);
+
+  const lastTwoWeeks = formatDateWithLocalTimezone(twoWeeksAgo);
+  console.log({lastTwoWeeks});
   try {
     const taskSnapShot = await db.collection("tasks")
         .where("assigneeId", "array-contains", userId)
-        // .where("endTime", ">", twoWeeksAgo)
+        // .where("endTime", ">", lastTwoWeeks)
         .get();
 
     const tasks = taskSnapShot.docs.map((doc)=>doc.data());
+    console.log(tasks);
     return tasks;
   } catch (error) {
     console.log({error});

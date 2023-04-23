@@ -23,10 +23,10 @@ const createInvoice = async (req, res)=>{
     });
   }
   try {
-    // const permissionLevel = req.user.permissionLevel;
-    // if (permissionLevel !== "admin") {
-    //   res.status(400).send({message: "User not authorized!"});
-    // }
+    const permissionLevel = req.user.permissionLevel;
+    if (permissionLevel !== "admin") {
+      res.status(400).send({message: "User not authorized!"});
+    }
 
 
     const userLastInvoiceDates = new Map();
@@ -39,15 +39,21 @@ const createInvoice = async (req, res)=>{
       if (new Date() < twoWeeksLater) {
         return res.status(400)
             .send(
-                // eslint-disable-next-line max-len
-                "Invoice cannot be generated until the next two weeks have lapsed.",
+
+                {status: 400,
+                  success: false,
+                  // eslint-disable-next-line max-len
+                  error: "Invoice cannot be generated until the next two weeks have lapsed."},
             );
       }
     }
 
     const tasks = await getCompletedTasks(userId);
     if (tasks.length === 0) {
-      return res.status(400).send("No tasks completed in the last two weeks.");
+      return res.status(400).send(
+          {status: 400,
+            success: false,
+            error: "No tasks completed in the last two weeks."});
     }
     const taskDetails = tasks.map((item)=>{
       const hours= getHourDiff(item.startTime, item.endTime);

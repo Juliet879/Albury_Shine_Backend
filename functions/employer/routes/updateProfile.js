@@ -1,11 +1,13 @@
 import {updateEmployerDetails, getAdminDetails} from "../../libraries.js";
 import {Timestamp} from "firebase-admin/firestore";
+import * as bcrypt from "bcrypt";
 
 
 const updateAdmin = async (req, res)=>{
   const {firstName, lastName, email, phoneNumber, password} = req.body;
   const query = req.params.userId;
   const userId = req.user.id;
+  const hashedPass = await bcrypt.hash(password, 10);
   if (userId !== query) {
     res.status(400).send({
       status: 400,
@@ -30,7 +32,7 @@ const updateAdmin = async (req, res)=>{
         email: email? email : getCurrentDetails.email,
         firstName: firstName? firstName : getCurrentDetails.firstName,
         lastName: lastName? lastName : getCurrentDetails.lastName,
-        password: password? password : getCurrentDetails.password,
+        password: hashedPass? hashedPass : getCurrentDetails.password,
         phoneNumber: phoneNumber? phoneNumber :getCurrentDetails.phoneNumber,
         updatedAt: Timestamp.now(),
       };

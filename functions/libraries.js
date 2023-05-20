@@ -119,12 +119,25 @@ export const accessToken = (user) => {
 export const authenticateToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
-  if (token == null) return res.sendStatus(401);
+  if (token == null) {
+    return res.status(401).send({
+      status: 401,
+      success: false,
+      error: "Token not found",
+    });
+  }
 
   const SECRET_KEY = SECRET;
 
   jwt.verify(token, SECRET_KEY, async (err, user) => {
-    if (err) return res.sendStatus(403);
+    if (err) {
+      return res.status(403).send({
+        status: 403,
+        success: false,
+        error: err.message,
+      });
+    }
+
     let uid;
     if (user.phoneNumber) {
       const phoneNumber = user.phoneNumber.substring(1);
@@ -363,8 +376,7 @@ export const getCompletedTasks = async (userId) =>{
   const twoWeeksAgo = new Date();
   twoWeeksAgo.setDate(twoWeeksAgo.getDate()-14);
 
-  const lastTwoWeeks = formatDateWithLocalTimezone(twoWeeksAgo);
-  console.log({lastTwoWeeks});
+  // const lastTwoWeeks = formatDateWithLocalTimezone(twoWeeksAgo);
   try {
     const taskSnapShot = await db.collection("tasks")
         .where("assigneeId", "array-contains", userId)
@@ -372,7 +384,6 @@ export const getCompletedTasks = async (userId) =>{
         .get();
 
     const tasks = taskSnapShot.docs.map((doc)=>doc.data());
-    console.log(tasks);
     return tasks;
   } catch (error) {
     console.log({error});
@@ -390,7 +401,7 @@ export const generateInvoice = async (userId, tasks, details)=>{
 
     "images": {
       // The logo on top of your invoice
-      "logo": "https://public.easyinvoice.cloud/img/logo_en_original.png",
+      "logo": "images/icon.png",
       // The invoice background
       "background": "https://public.easyinvoice.cloud/img/watermark-draft.jpg",
     },
@@ -445,6 +456,30 @@ export const generateInvoice = async (userId, tasks, details)=>{
   });
   await sendInvoiceEmail(employee.email, "Albury Shine Invoice", response);
   return response;
+};
+export const getAllInvoices = async () => {
+  const checkInvoices = await db.collection("invoice").get();
+  const querySnapshot = [];
+  if (checkInvoices.empty) {
+    return false;
+  } else {
+    checkInvoices.forEach((item) => {
+      querySnapshot.push(item.data());
+    });
+  }
+  return querySnapshot;
+};
+export const getEmployeeInvoices = async (userId) => {
+  const checkInvoices = await db.collection("invoice").where("userId", "==", userId ).get();
+  const querySnapshot = [];
+  if (checkInvoices.empty) {
+    return false;
+  } else {
+    checkInvoices.forEach((item) => {
+      querySnapshot.push(item.data());
+    });
+  }
+  return querySnapshot;
 };
 // export async function uploadDefaultProfileImage(uid) {
 //   const defaultImagePath = "functions/default_image.jpg";

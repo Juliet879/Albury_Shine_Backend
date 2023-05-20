@@ -1,8 +1,11 @@
+/* eslint-disable max-len */
 import {db} from "../../index.js";
 import {validationResult} from "express-validator";
 import {getCompletedTasks,
   generateInvoice,
   getHourDiff} from "../../libraries.js";
+import {Timestamp} from "firebase-admin/firestore";
+
 
 // import {Timestamp} from "firebase-admin/firestore";
 
@@ -23,10 +26,10 @@ const createInvoice = async (req, res)=>{
     });
   }
   try {
-    const permissionLevel = req.user.permissionLevel;
-    if (permissionLevel !== "admin") {
-      res.status(400).send({message: "User not authorized!"});
-    }
+    // const permissionLevel = req.user.permissionLevel;
+    // if (permissionLevel !== "admin") {
+    //   res.status(400).send({message: "User not authorized!"});
+    // }
 
 
     const userLastInvoiceDates = new Map();
@@ -73,7 +76,6 @@ const createInvoice = async (req, res)=>{
       bsb,
     };
     const response = await generateInvoice(userId, taskDetails, details);
-    userLastInvoiceDates.set(userId, new Date());
 
     const invoiceId = db.collection("invoice").doc().id;
     await db.collection("invoice")
@@ -81,6 +83,7 @@ const createInvoice = async (req, res)=>{
           employeeId: userId,
           invoiceId: invoiceId,
           data: response.pdf,
+          createdAt: Timestamp.now(),
         });
     res.status(200).send({
       status: 200,

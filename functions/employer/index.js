@@ -18,6 +18,8 @@ import deleteTask from "./routes/deleteTask.js";
 import timeSheet from "./routes/getTimesheet.js";
 import updateEmployee from "./routes/updateEmployee.js";
 import createInvoice from "./routes/generateInvoice.js";
+import allInvoices from "./routes/employeeInvoice.js";
+
 
 const employer = express().use(cors({origin: true}));
 employer.post("/", async (req, res) => {
@@ -38,7 +40,7 @@ employer.post("/add-task", authenticateToken, addTask);
 employer.post("/create-employee", authenticateToken, createEmployee);
 employer.delete("/delete-employee", authenticateToken, deleteEmployee);
 employer.patch("/profile/:userId", authenticateToken, updateAdmin);
-employer.patch("/update//:taskId", authenticateToken, updateTask);
+employer.patch("/update-task/:taskId", authenticateToken, updateTask);
 employer.get("/task", authenticateToken, getTask);
 employer.get("/all-tasks", authenticateToken, allTasks);
 employer.get("/get-employee/:userId", authenticateToken, getEmployee);
@@ -46,7 +48,8 @@ employer.get("/get-admin/:userId", authenticateToken, getEmployer);
 employer.delete("/delete-task", authenticateToken, deleteTask);
 employer.get("/timesheet", authenticateToken, timeSheet);
 employer.patch("/update-employee/:userId", authenticateToken, updateEmployee);
-employer.post("/generate-invoice", authenticateToken, createInvoice);
+employer.post("/generate-invoice", createInvoice);
+employer.get("/all-invoices", authenticateToken, allInvoices);
 
 export default
 functions.region("europe-west3").https.onRequest(employer);

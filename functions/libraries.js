@@ -386,7 +386,6 @@ export const getCompletedTasks = async (userId) =>{
     const tasks = taskSnapShot.docs.map((doc)=>doc.data());
     return tasks;
   } catch (error) {
-    console.log({error});
     return [];
   }
 };
@@ -396,14 +395,15 @@ export const generateInvoice = async (userId, tasks, details)=>{
   let invoiceNumber = 2023.0000;
   const oneWeekLater = new Date();
   oneWeekLater.setDate(oneWeekLater.getDate()+7);
+
   // item.hours= getHourDiff(item.startTime, item.endTime): null;
   const data = {
 
     "images": {
       // The logo on top of your invoice
-      "logo": "images/icon.png",
+      // "logo": "https://public.easyinvoice.cloud/img/logo_en_original.png",
       // The invoice background
-      "background": "https://public.easyinvoice.cloud/img/watermark-draft.jpg",
+      "background": "https://public.easyinvoice.cloud/pdf/sample-background.pdf",
     },
     // Your own data
     "sender": {
@@ -434,7 +434,7 @@ export const generateInvoice = async (userId, tasks, details)=>{
       // Invoice data
       "date": `${new Date()}`,
       // Invoice due date
-      "due-date": `${oneWeekLater}`,
+      "due-date": `${oneWeekLater.toLocaleDateString()}`,
     },
     // The products you would like to see on your invoice
     // Total values are being calculated automatically
@@ -470,7 +470,7 @@ export const getAllInvoices = async () => {
   return querySnapshot;
 };
 export const getEmployeeInvoices = async (userId) => {
-  const checkInvoices = await db.collection("invoice").where("userId", "==", userId ).get();
+  const checkInvoices = await db.collection("invoice").where("employeeId", "==", userId ).get();
   const querySnapshot = [];
   if (checkInvoices.empty) {
     return false;

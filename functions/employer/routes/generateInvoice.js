@@ -91,6 +91,7 @@ const createInvoice = async (req, res)=>{
       data: response.pdf,
     });
   } catch (error) {
+    console.log({error});
     res.status(500).send({
       status: 500,
       success: false,

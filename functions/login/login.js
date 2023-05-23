@@ -77,10 +77,10 @@ const login = async (req, res)=>{
       } else {
         res.status(401).send({message: "Wrong credentials"});
       }
+    } else {
+      res.status(400).send({error: "User does not exist"});
     }
-    res.status(400).send({error: "User does not exist"});
   } catch (error) {
-    console.log(error);
     res.status(500).send({
       status: 500,
       success: false,

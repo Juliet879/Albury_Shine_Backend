@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import functions from "firebase-functions";
 import cors from "cors";
 import express from "express";
@@ -19,6 +20,7 @@ import timeSheet from "./routes/getTimesheet.js";
 import updateEmployee from "./routes/updateEmployee.js";
 import createInvoice from "./routes/generateInvoice.js";
 import allInvoices from "./routes/employeeInvoice.js";
+import employeeInvoicesById from "./routes/getEmployeeInvoiceById.js";
 
 
 const employer = express().use(cors({origin: true}));
@@ -50,6 +52,7 @@ employer.get("/timesheet", authenticateToken, timeSheet);
 employer.patch("/update-employee/:userId", authenticateToken, updateEmployee);
 employer.post("/generate-invoice", createInvoice);
 employer.get("/all-invoices", authenticateToken, allInvoices);
+employer.get("/employee-invoices/:userId", authenticateToken, employeeInvoicesById);
 
 export default
 functions.region("europe-west3").https.onRequest(employer);
